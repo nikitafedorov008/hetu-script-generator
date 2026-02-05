@@ -1,5 +1,7 @@
 # Hetu Script Generator
 
+Reimplementation of [hetu-script-autobinding](https://github.com/hetu-script/hetu-script-autobinding)
+
 ### **Note:** The package is in early stage of development, please think carefully before using it in production.
 
 This package provides a build_runner generator that emits Hetu <-> Dart bindings
