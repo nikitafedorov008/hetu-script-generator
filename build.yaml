@@ -13,3 +13,10 @@ builders:
     auto_apply: dependents
     build_to: source
     runs_before: ["source_gen:combining_builder"]
+  external_bindings:
+    import: "package:hetu_script_generator/builder.dart"
+    builder_factories: ["externalBindingsBuilder"]
+    build_extensions: {".dart": [".hetu.g.dart", ".ht"]}
+    auto_apply: dependents
+    build_to: source
+    runs_before: ["source_gen:combining_builder"]

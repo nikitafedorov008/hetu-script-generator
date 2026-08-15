@@ -28,6 +28,25 @@ class HetuGenerateBindings {
   const HetuGenerateBindings();
 }
 
+/// Config-driven generation for classes you cannot annotate (Flutter/SDK/3rd
+/// party). Attach to a library directive or a top-level const marker in YOUR
+/// package; the builder emits standalone bindings for every listed type plus
+/// the paired Hetu `external class` declarations (`.ht`).
+///
+/// ```dart
+/// @HetuBindings(classes: [Text, Container, EdgeInsets])
+/// const flutterBindings = true;
+/// ```
+class HetuBindings {
+  /// Types to generate bindings for (classes and enums).
+  final List<Type> classes;
+
+  /// Per-type member names to exclude, on top of the built-in ignore list.
+  final Map<Type, List<String>> skip;
+
+  const HetuBindings({required this.classes, this.skip = const {}});
+}
+
 // Public re-exports (future API growth)
 const hetuExternalClass = HetuExternalClass;
 const hetuExternalMember = HetuExternalMember;

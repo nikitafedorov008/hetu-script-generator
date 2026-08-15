@@ -1,2 +1,10 @@
 # Project exclude paths
 /.dart_tool/
+# OS / IDE noise
+.DS_Store
+**/.DS_Store
+
+# Build outputs
+build/
+example/build/
+example/.flutter-plugins-dependencies

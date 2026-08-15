@@ -3,9 +3,12 @@ import 'package:build_test/build_test.dart';
 import 'package:test/test.dart';
 import 'package:hetu_script_generator/builder.dart' as builder_pkg;
 
+import 'matchers.dart';
+
 void main() {
   // shared builder for tests
   final builder = builder_pkg.bindingsBuilder(BuilderOptions({}));
+
   test('generates binding for simple Person class', () async {
     final src = r"""
 import 'package:hetu_script_generator/annotations.dart';
@@ -20,21 +23,19 @@ class Person {
 }
 """;
 
-    final expectedPieces = [
-      'class PersonClassBinding extends HTExternalClass',
-      'extension PersonObjectBinding on Person',
-      "case 'greet':",
-      "return ({positionalArgs, namedArgs}) =>",
-    ];
-
-    // Use the builder declared in this package
     await testBuilder(
       builder,
       {
         'a|lib/person.dart': src,
       },
       outputs: {
-        'a|lib/person.g.dart': containsAll(expectedPieces),
+        'a|lib/person.g.dart': decodedMatches(containsNormalized([
+          'class PersonClassBinding extends HTExternalClass',
+          'extension PersonObjectBinding on Person',
+          "case 'greet':",
+          'List<dynamic> positionalArgs = const []',
+          'Map<String, dynamic> namedArgs = const {}',
+        ])),
       },
       reader: await PackageAssetReader.currentIsolate(),
     );
@@ -67,31 +68,30 @@ class Human {
 }
 """;
 
-    final expected = [
-      "case 'Human.withName':",
-      "Human.withName(positionalArgs.length > 0 ? positionalArgs[0]",
-      "positionalArgs.length > 1 ? positionalArgs[1] : 'Caucasion'",
-      // static getter exposed on the class
-      "case 'Human.level':",
-      "return Human.level;",
-      // static setter exposed on the class
-      "return Human.level = value;",
-      // static final should be immutable
-      "case 'Human.races':",
-      "throw HTError.immutable(id);",
-      // instance-side assignment for static-backed property
-      "case 'level':",
-      "Human.level = value",
-    ];
-
     await testBuilder(
       builder,
       {
         'a|lib/human.dart': src,
       },
       outputs: {
-        'a|lib/human.g.dart': allOf(containsAll(expected),
-            isNot(contains("case 'child':\n        child = value"))),
+        'a|lib/human.g.dart': decodedMatches(allOf(
+          containsNormalized([
+            "case 'Human.withName':",
+            "(positionalArgs.length > 0 && positionalArgs[0] != null) ? positionalArgs[0] : 'Jimmy'",
+            "(positionalArgs.length > 1 && positionalArgs[1] != null) ? positionalArgs[1] : 'Caucasion'",
+            // static getter exposed on the class
+            "case 'Human.level':",
+            'return Human.level;',
+            // static setter exposed on the class
+            'Human.level = value;',
+            // static final should be immutable
+            "case 'Human.races':",
+            'throw HTError.immutable(id);',
+            // instance-side assignment for the static-backed property
+            "case 'level': Human.level = value;",
+          ]),
+          notContainsNormalized(["case 'child': child = value"]),
+        )),
       },
       reader: await PackageAssetReader.currentIsolate(),
     );
@@ -107,23 +107,23 @@ part 'ingredients.g.dart';
 enum Ingredients { Apple, Banana, Cinnamon }
 """;
 
-    final expected = [
-      'class IngredientsClassBinding extends HTExternalClass',
-      "case 'Ingredients.Apple':",
-      "case 'Ingredients.values':",
-      'extension IngredientsObjectBinding on Ingredients',
-      "case 'index':",
-      "case 'name':",
-    ];
-
     await testBuilder(
       builder,
       {
         'a|lib/ingredients.dart': src,
       },
       outputs: {
-        'a|lib/ingredients.g.dart':
-            allOf(containsAll(expected), isNot(contains("index = value"))),
+        'a|lib/ingredients.g.dart': decodedMatches(allOf(
+          containsNormalized([
+            'class IngredientsClassBinding extends HTExternalClass',
+            "case 'Ingredients.Apple':",
+            "case 'Ingredients.values':",
+            'extension IngredientsObjectBinding on Ingredients',
+            "case 'index':",
+            "case 'name':",
+          ]),
+          notContainsNormalized(['index = value']),
+        )),
       },
       reader: await PackageAssetReader.currentIsolate(),
     );
@@ -151,11 +151,10 @@ class Human {
         'a|lib/human.dart': src,
       },
       outputs: {
-        'a|lib/human.g.dart': allOf(
-          isNot(contains("case 'child':\n        child = value")),
-          isNot(contains(
-              "case 'name':\n        return name;\n      case 'name':")),
-        ),
+        'a|lib/human.g.dart': decodedMatches(notContainsNormalized([
+          "case 'child': child = value",
+          "case 'name': return name; case 'name':",
+        ])),
       },
       reader: await PackageAssetReader.currentIsolate(),
     );
@@ -165,7 +164,7 @@ class Human {
     final src = r"""
 import 'package:hetu_script_generator/annotations.dart';
 
-part 'human.g.dart';
+part 'human_setter_only.g.dart';
 
 @HetuExternalClass()
 class Human {
@@ -181,10 +180,10 @@ class Human {
         'a|lib/human_setter_only.dart': src,
       },
       outputs: {
-        'a|lib/human_setter_only.g.dart': allOf(
-          contains("case 'child':\n        child = value"),
-          isNot(contains("case 'child':\n        return child;")),
-        ),
+        'a|lib/human_setter_only.g.dart': decodedMatches(allOf(
+          containsNormalized(["case 'child': child = value"]),
+          notContainsNormalized(["case 'child': return child;"]),
+        )),
       },
       reader: await PackageAssetReader.currentIsolate(),
     );
@@ -210,10 +209,10 @@ class Derived extends Base {}
         'a|lib/derived.dart': src,
       },
       outputs: {
-        'a|lib/derived.g.dart': allOf(
-          contains("case 'inherited':\n        return inherited;"),
-          isNot(contains("case 'inherited':\n        inherited = value")),
-        ),
+        'a|lib/derived.g.dart': decodedMatches(allOf(
+          containsNormalized(["case 'inherited': return inherited;"]),
+          notContainsNormalized(["case 'inherited': inherited = value"]),
+        )),
       },
       reader: await PackageAssetReader.currentIsolate(),
     );
@@ -224,7 +223,7 @@ class Derived extends Base {}
     final src = r"""
 import 'package:hetu_script_generator/annotations.dart';
 
-part 'derived.g.dart';
+part 'derived_setter.g.dart';
 
 class Base {
   set inherited(String _) {}
@@ -240,10 +239,10 @@ class Derived extends Base {}
         'a|lib/derived_setter.dart': src,
       },
       outputs: {
-        'a|lib/derived_setter.g.dart': allOf(
-          contains("case 'inherited':\n        inherited = value"),
-          isNot(contains("case 'inherited':\n        return inherited;")),
-        ),
+        'a|lib/derived_setter.g.dart': decodedMatches(allOf(
+          containsNormalized(["case 'inherited': inherited = value"]),
+          notContainsNormalized(["case 'inherited': return inherited;"]),
+        )),
       },
       reader: await PackageAssetReader.currentIsolate(),
     );
