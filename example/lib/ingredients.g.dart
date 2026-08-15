@@ -1,5 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: public_member_api_docs, unnecessary_this, unused_import, prefer_void_to_null, deprecated_member_use_from_same_package
+// ignore_for_file: public_member_api_docs, unnecessary_this, unused_import, prefer_void_to_null, deprecated_member_use_from_same_package, deprecated_member_use, unused_element, avoid_renaming_method_parameters, unnecessary_parenthesis, curly_braces_in_flow_control_structures, directives_ordering, prefer_is_empty
 
 part of 'ingredients.dart';
 
@@ -8,7 +8,6 @@ part of 'ingredients.dart';
 // **************************************************************************
 
 // *** hetu_script_generator output for Ingredients
-
 class IngredientsClassBinding extends HTExternalClass {
   IngredientsClassBinding() : super('Ingredients');
 
@@ -32,18 +31,7 @@ class IngredientsClassBinding extends HTExternalClass {
   @override
   void memberSet(String id, dynamic value,
       {String? from, bool defineIfAbsent = false}) {
-    switch (id) {
-      case 'Ingredients.Apple':
-        throw HTError.immutable(id);
-      case 'Ingredients.Banana':
-        throw HTError.immutable(id);
-      case 'Ingredients.Cinnamon':
-        throw HTError.immutable(id);
-      case 'Ingredients.values':
-        throw HTError.immutable(id);
-      default:
-        throw HTError.undefined(id);
-    }
+    throw HTError.immutable(id);
   }
 
   @override
@@ -51,20 +39,9 @@ class IngredientsClassBinding extends HTExternalClass {
       {bool ignoreUndefined = false}) {
     try {
       return (instance as Ingredients).htFetch(id);
-    } on HTError catch (e) {
+    } on HTError {
       if (!ignoreUndefined) rethrow;
       return null;
-    }
-  }
-
-  @override
-  void instanceMemberSet(dynamic instance, String id, dynamic value,
-      {bool ignoreUndefined = false}) {
-    try {
-      var i = instance as Ingredients;
-      i.htAssign(id, value);
-    } on HTError catch (e) {
-      if (!ignoreUndefined) rethrow;
     }
   }
 }
@@ -80,13 +57,6 @@ extension IngredientsObjectBinding on Ingredients {
         return name;
       default:
         throw HTError.undefined(varName);
-    }
-  }
-
-  void htAssign(String id, dynamic value) {
-    switch (id) {
-      default:
-        throw HTError.undefined(id);
     }
   }
 }

@@ -1,5 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: public_member_api_docs, unnecessary_this, unused_import, prefer_void_to_null, deprecated_member_use_from_same_package
+// ignore_for_file: public_member_api_docs, unnecessary_this, unused_import, prefer_void_to_null, deprecated_member_use_from_same_package, deprecated_member_use, unused_element, avoid_renaming_method_parameters, unnecessary_parenthesis, curly_braces_in_flow_control_structures, directives_ordering, prefer_is_empty
 
 part of 'person.dart';
 
@@ -16,7 +16,9 @@ class PersonClassBinding extends HTExternalClass {
       {String? from, bool isRecursive = false, bool ignoreUndefined = false}) {
     switch (id) {
       case 'Person':
-        return ({positionalArgs, namedArgs}) =>
+        return (
+                {List<dynamic> positionalArgs = const [],
+                Map<String, dynamic> namedArgs = const {}}) =>
             Person(positionalArgs.length > 0 ? positionalArgs[0] : null);
       default:
         throw HTError.undefined(id);
@@ -37,7 +39,7 @@ class PersonClassBinding extends HTExternalClass {
       {bool ignoreUndefined = false}) {
     try {
       return (instance as Person).htFetch(id);
-    } on HTError catch (e) {
+    } on HTError {
       if (!ignoreUndefined) rethrow;
       return null;
     }
@@ -47,9 +49,8 @@ class PersonClassBinding extends HTExternalClass {
   void instanceMemberSet(dynamic instance, String id, dynamic value,
       {bool ignoreUndefined = false}) {
     try {
-      var i = instance as Person;
-      i.htAssign(id, value);
-    } on HTError catch (e) {
+      (instance as Person).htAssign(id, value);
+    } on HTError {
       if (!ignoreUndefined) rethrow;
     }
   }
@@ -61,7 +62,10 @@ extension PersonObjectBinding on Person {
       case 'runtimeType':
         return const HTExternalType('Person');
       case 'greet':
-        return ({positionalArgs, namedArgs}) => greet();
+        return (
+                {List<dynamic> positionalArgs = const [],
+                Map<String, dynamic> namedArgs = const {}}) =>
+            greet();
       case 'name':
         return name;
       default:

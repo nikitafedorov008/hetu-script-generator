@@ -3,6 +3,8 @@ import 'package:build_test/build_test.dart';
 import 'package:test/test.dart';
 import 'package:hetu_script_generator/builder.dart' as builder_pkg;
 
+import 'matchers.dart';
+
 void main() {
   // shared builder for tests
   final builder = builder_pkg.bindingsBuilder(BuilderOptions({}));
@@ -27,19 +29,19 @@ class ScriptContainer extends StatefulWidget {
 }
 """;
 
-    final expected = [
-      'case \'ScriptContainer.rebuild\':',
-      "case 'child':",
-      "case 'createState':",
-      "return ({positionalArgs, namedArgs}) =>",
-    ];
     await testBuilder(
       builder,
       {
         'a|lib/script_container.dart': src,
       },
       outputs: {
-        'a|lib/script_container.g.dart': containsAll(expected),
+        'a|lib/script_container.g.dart': decodedMatches(containsNormalized([
+          "case 'ScriptContainer.rebuild':",
+          "case 'child':",
+          "case 'createState':",
+          'List<dynamic> positionalArgs = const []',
+          'Map<String, dynamic> namedArgs = const {}',
+        ])),
       },
       reader: await PackageAssetReader.currentIsolate(),
     );
